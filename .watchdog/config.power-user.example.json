@@ -1,0 +1,53 @@
+{
+  "enabled": true,
+  "provider": {
+    "type": "openai-compatible",
+    "model": "local-judge",
+    "base_url": "http://localhost:11434",
+    "api_key_env": "WATCHDOG_API_KEY"
+  },
+  "thresholds": {
+    "deny_above": 0.6,
+    "review_between": [0.15, 0.6],
+    "allow_below": 0.15
+  },
+  "allowlist": [
+    "read",
+    "grep",
+    "glob",
+    "lsp_*"
+  ],
+  "blocklist_patterns": [
+    {
+      "pattern": "*rm -rf /*",
+      "type": "glob",
+      "risk_level": "critical",
+      "description": "Recursive delete from root"
+    },
+    {
+      "pattern": "*kubectl delete*",
+      "type": "glob",
+      "risk_level": "high",
+      "description": "Cluster deletion command"
+    },
+    {
+      "pattern": ".*DELETE FROM(?!.*WHERE).*",
+      "type": "regex",
+      "risk_level": "critical",
+      "description": "Delete without where clause"
+    }
+  ],
+  "on_error": "deny",
+  "timeout_ms": 45000,
+  "subagent_strategy": "tool-definition",
+  "audit": {
+    "enabled": true,
+    "log_dir": ".watchdog/logs",
+    "log_allowed": true,
+    "log_denied": true
+  },
+  "prompts": {
+    "system_template_path": ".watchdog/prompts/system.txt",
+    "user_template_path": ".watchdog/prompts/user.txt"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "enabled": true,
+  "provider": {
+    "type": "copilot",
+    "model": "github-copilot/gpt-5-mini"
+  },
+  "thresholds": {
+    "deny_above": 0.85,
+    "review_between": [0.3, 0.85],
+    "allow_below": 0.3
+  },
+  "allowlist": [
+    "read",
+    "grep",
+    "glob",
+    "aft_outline",
+    "aft_zoom",
+    "aft_safety",
+    "lsp_symbols",
+    "lsp_diagnostics",
+    "lsp_goto_definition",
+    "lsp_find_references"
+  ],
+  "blocklist_patterns": [
+    {
+      "pattern": "*rm -rf /*",
+      "type": "glob",
+      "risk_level": "critical",
+      "description": "Recursive delete from root"
+    },
+    {
+      "pattern": ".*DROP TABLE.*",
+      "type": "regex",
+      "risk_level": "critical",
+      "description": "SQL table drop"
+    },
+    {
+      "pattern": "*git push --force*",
+      "type": "glob",
+      "risk_level": "high",
+      "description": "Force push to remote"
+    }
+  ],
+  "on_error": "allow",
+  "timeout_ms": 30000,
+  "subagent_strategy": "task-wrapper",
+  "audit": {
+    "enabled": true,
+    "log_dir": ".watchdog/logs",
+    "log_allowed": false,
+    "log_denied": true
+  },
+  "prompts": {
+    "system_template_path": ".watchdog/prompts/system.txt",
+    "user_template_path": ".watchdog/prompts/user.txt"
+  }
+}

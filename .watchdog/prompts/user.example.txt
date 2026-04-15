@@ -1,0 +1,7 @@
+Evaluate this tool call.
+
+Tool: {{tool_name}}
+Args: {{tool_args}}
+Context: {{context}}
+
+Return a JSON verdict only.
