@@ -6,8 +6,7 @@ import type { WatchdogConfig, WatchdogVerdict } from "@/types";
 export class SharedState {
   readonly pendingReviews = new Map<string, WatchdogVerdict>();
   readonly recursionGuard = new RecursionGuard();
-  toolHistory: string[] = [];
+  pipeline: EvaluationPipeline | null = null;
   config: WatchdogConfig | null = null;
   auditLogger: AuditLogger | null = null;
-  pipeline: EvaluationPipeline | null = null;
 }

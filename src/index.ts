@@ -48,4 +48,4 @@ const server: Plugin = async (pluginInput) => {
   }
 };
 
-export default { server } satisfies PluginModule;
+export default { id: "opencode-watchdog-plugin", server } satisfies PluginModule;

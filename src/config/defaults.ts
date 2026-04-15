@@ -23,10 +23,6 @@ export const DEFAULT_CONFIG: WatchdogConfig = {
   on_error: "allow",
   timeout_ms: 30000,
   subagent_strategy: "task-wrapper",
-  loop_prevention: {
-    enabled: true,
-    max_consecutive: 4,
-  },
   audit: {
     enabled: true,
     log_dir: ".watchdog/logs",

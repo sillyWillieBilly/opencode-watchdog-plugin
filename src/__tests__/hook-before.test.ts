@@ -9,7 +9,7 @@ describe("tool.execute.before hook", () => {
     state.config = { ...DEFAULT_CONFIG, allowlist: [] };
     state.pipeline = { evaluate: async () => ({ action: "deny", confidence: 0.95, risk_level: "critical", reasoning: "dangerous", concerns: [], suggestions: [], tier: "arbitrated", latency_ms: 0 }) } as never;
     const hook = createToolBeforeHook(state);
-    await expect(hook({ tool: "bash", sessionID: "s", callID: "c" }, { args: { command: "rm -rf /" } })).rejects.toThrow("[Watchdog] Blocked");
+    await expect(hook({ tool: "bash", sessionID: "s", callID: "c" }, { args: { command: "rm -rf /" } })).rejects.toThrow("[Watchdog] 🛑 BLOCKED");
   });
 
   it("stores ask verdicts in pendingReviews", async () => {
@@ -17,7 +17,7 @@ describe("tool.execute.before hook", () => {
     state.config = { ...DEFAULT_CONFIG, allowlist: [] };
     state.pipeline = { evaluate: async () => ({ action: "ask", confidence: 0.55, risk_level: "medium", reasoning: "uncertain", concerns: [], suggestions: [], tier: "arbitrated", latency_ms: 0 }) } as never;
     const hook = createToolBeforeHook(state);
-    await expect(hook({ tool: "bash", sessionID: "s", callID: "c" }, { args: { command: "touch file" } })).rejects.toThrow("Review required");
+    await expect(hook({ tool: "bash", sessionID: "s", callID: "c" }, { args: { command: "touch file" } })).rejects.toThrow("⚠️ REVIEW REQUIRED");
     expect(state.pendingReviews.has("c")).toBe(true);
   });
 

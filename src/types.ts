@@ -50,11 +50,6 @@ export interface PromptConfig {
   user_template_path?: string;
 }
 
-export interface LoopPreventionConfig {
-  enabled: boolean;
-  max_consecutive: number;
-}
-
 export interface WatchdogConfig {
   enabled: boolean;
   provider?: ProviderConfig;
@@ -66,8 +61,8 @@ export interface WatchdogConfig {
   subagent_strategy: SubagentStrategy;
   audit: AuditConfig;
   prompts: PromptConfig;
-  loop_prevention: LoopPreventionConfig;
 }
+
 export interface AuditEntry {
   timestamp: string;
   session_id: string;
@@ -212,14 +207,6 @@ const isBlocklistPatternArray = (value: unknown): value is BlocklistPattern[] =>
       typeof item.description === "string",
   );
 
-const isLoopPreventionConfig = (value: unknown): value is LoopPreventionConfig => {
-  if (!isObject(value)) return false;
-  return (
-    typeof value.enabled === "boolean" &&
-    typeof value.max_consecutive === "number"
-  );
-};
-
 export const isWatchdogVerdict = (value: unknown): value is WatchdogVerdict => {
   if (!isObject(value)) return false;
   return (
@@ -247,7 +234,6 @@ export const isWatchdogConfig = (value: unknown): value is WatchdogConfig => {
     typeof value.timeout_ms === "number" &&
     ["task-wrapper", "tool-definition", "both"].includes(String(value.subagent_strategy)) &&
     isAuditConfig(value.audit) &&
-    isPromptConfig(value.prompts) &&
-    isLoopPreventionConfig(value.loop_prevention)
+    isPromptConfig(value.prompts)
   );
 };

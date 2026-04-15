@@ -26,7 +26,6 @@ const sanitizeProjectConfig = (value: unknown): Partial<WatchdogConfig> => {
 
   const projectConfig = { ...(value as Record<string, unknown>) };
   delete projectConfig.provider;
-  delete projectConfig.loop_prevention;
 
   const audit = projectConfig.audit;
   if (typeof audit === "object" && audit !== null && !Array.isArray(audit)) {
