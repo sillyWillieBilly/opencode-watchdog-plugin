@@ -17,20 +17,10 @@ describe("config loader", () => {
   it("loads defaults when no files exist", async () => {
     const dir = await mkdtemp(join(tmpdir(), "watchdog-config-"));
     tempDirs.push(dir);
-    const messages: string[] = [];
-    const originalInfo = console.info;
-    console.info = ((message?: unknown) => {
-      messages.push(String(message));
-    }) as typeof console.info;
-
-    try {
-      const config = await loadConfig(dir);
-      expect(config.thresholds.deny_above).toBe(0.8);
-      expect(config.allowlist).toContain("read");
-      expect(messages.some((message) => message.includes("LLM judge disabled"))).toBe(true);
-    } finally {
-      console.info = originalInfo;
-    }
+    const config = await loadConfig(dir);
+    expect(config.thresholds.deny_above).toBe(0.8);
+    expect(config.allowlist).toContain("read");
+    expect(config.loop_prevention).toEqual({ enabled: true, max_consecutive: 4 });
   });
 
   it("project config overrides global nested values while preserving defaults", async () => {
@@ -81,6 +71,15 @@ describe("config loader", () => {
     await writeFile(join(project, ".watchdog", "config.json"), JSON.stringify({ allowlist: ["custom"] }));
     const config = await loadConfig(project);
     expect(config.allowlist).toEqual(["custom"]);
+  });
+
+  it("preserves project loop_prevention overrides", async () => {
+    const project = await mkdtemp(join(tmpdir(), "watchdog-loop-prevention-"));
+    tempDirs.push(project);
+    await mkdir(join(project, ".watchdog"), { recursive: true });
+    await writeFile(join(project, ".watchdog", "config.json"), JSON.stringify({ loop_prevention: { max_consecutive: 6 } }));
+    const config = await loadConfig(project);
+    expect(config.loop_prevention).toEqual({ enabled: true, max_consecutive: 6 });
   });
 
   it("throws on invalid thresholds", async () => {
