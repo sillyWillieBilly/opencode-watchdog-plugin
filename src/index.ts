@@ -1,6 +1,7 @@
 import type { Hooks, Plugin, PluginModule } from "@opencode-ai/plugin";
 import { createAuditLogger } from "@/audit";
 import { loadConfig } from "@/config";
+import { createEventHook } from "@/hooks/event";
 import { SharedState } from "@/hooks/shared-state";
 import { createPermissionAskHook } from "@/hooks/permission-ask";
 import { createToolAfterHook } from "@/hooks/tool-after";
@@ -32,6 +33,7 @@ const server: Plugin = async (pluginInput) => {
     watchdogTask = subagent.getTaskWrapper();
 
     const hooks: Hooks = {
+      event: createEventHook(state),
       "tool.execute.before": createToolBeforeHook(state),
       "tool.execute.after": createToolAfterHook(state),
       "permission.ask": createPermissionAskHook(state),

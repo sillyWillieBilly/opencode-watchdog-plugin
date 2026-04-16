@@ -14,6 +14,20 @@ export const createToolBeforeHook = (state: SharedState): NonNullable<Hooks["too
       return;
     }
 
+    if (state.config.loop_prevention.enabled) {
+      const callHash = JSON.stringify({ t: input.tool, a: output.args });
+      state.toolHistory.push(callHash);
+      if (state.toolHistory.length > state.config.loop_prevention.max_consecutive) {
+        state.toolHistory.shift();
+      }
+      if (state.toolHistory.length === state.config.loop_prevention.max_consecutive) {
+        const allSame = state.toolHistory.every((historyItem) => historyItem === callHash);
+        if (allSame) {
+          throw new Error(`[Watchdog] 🛑 CIRCUIT BREAKER: INFINITE LOOP DETECTED. You have called this exact tool (${input.tool}) ${state.config.loop_prevention.max_consecutive} times in a row without progress. You MUST use the /stop-continuation tool or ask the human for help.`);
+        }
+      }
+    }
+
     try {
       const verdict = await state.pipeline.evaluate({
         tool_name: input.tool,
