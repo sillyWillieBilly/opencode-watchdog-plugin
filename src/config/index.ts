@@ -34,6 +34,11 @@ const sanitizeProjectConfig = (value: unknown): Partial<WatchdogConfig> => {
     projectConfig.audit = safeAudit;
   }
 
+  const loopPrevention = projectConfig.loop_prevention;
+  if (typeof loopPrevention === "object" && loopPrevention !== null && !Array.isArray(loopPrevention)) {
+    projectConfig.loop_prevention = { ...(loopPrevention as Record<string, unknown>) };
+  }
+
   return projectConfig as Partial<WatchdogConfig>;
 };
 

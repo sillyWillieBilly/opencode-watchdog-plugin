@@ -31,6 +31,7 @@ describe("types", () => {
         on_error: "allow",
         timeout_ms: 1000,
         subagent_strategy: "task-wrapper",
+        loop_prevention: { enabled: true, max_consecutive: 4 },
         audit: { enabled: true, log_dir: ".watchdog/logs", log_allowed: false, log_denied: true },
         prompts: {},
       }),
